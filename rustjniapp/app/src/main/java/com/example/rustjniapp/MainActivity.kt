@@ -12,12 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.rustjniapp.ui.theme.RustJniAppTheme
-import com.example.rustjnilib.JNIInterface
+import com.example.rustjnilib.NativeLib
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        JNIInterface.displayMessage("hello world!!")
+        NativeLib.staticMethod()
+        NativeLib.instanceMethod()
         enableEdgeToEdge()
         setContent {
             RustJniAppTheme {

@@ -41,3 +41,26 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
+val rustBuild = tasks.register("rustBuild") {
+    group = "build"
+    description = "Build Rust via cargo-ndk"
+
+    doLast {
+        exec {
+            workingDir = file("../../rustjni")
+            executable = "/Users/user_path/.cargo/bin/cargo"
+            args = listOf(
+                "ndk",
+                "-t", "arm64-v8a",
+                "-o", "../rustjniapp/rustjnilib/src/main/jniLibs",
+                "build"
+            )
+        }
+    }
+}
+
+// Android ビルド時に必ず Rust ビルドも実行
+tasks.named("preBuild") {
+//    dependsOn(rustBuild)
+}
