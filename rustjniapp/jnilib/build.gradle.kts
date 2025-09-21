@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -42,6 +44,15 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+} else {
+    println("⚠️ local.properties not found!")
+}
+val cargoPath: String? = localProperties.getProperty("cargoPath")
+
 val rustBuild = tasks.register("rustBuild") {
     group = "build"
     description = "Build Rust via cargo-ndk"
@@ -49,11 +60,11 @@ val rustBuild = tasks.register("rustBuild") {
     doLast {
         exec {
             workingDir = file("../../rustjni")
-            executable = "/Users/user_path/.cargo/bin/cargo"
+            executable = cargoPath
             args = listOf(
                 "ndk",
                 "-t", "arm64-v8a",
-                "-o", "../rustjniapp/rustjnilib/src/main/jniLibs",
+                "-o", "../rustjniapp/jnilib/src/main/jniLibs",
                 "build"
             )
         }
@@ -62,5 +73,5 @@ val rustBuild = tasks.register("rustBuild") {
 
 // Android ビルド時に必ず Rust ビルドも実行
 tasks.named("preBuild") {
-//    dependsOn(rustBuild)
+    dependsOn(rustBuild)
 }

@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "RustJniApp"
 include(":app")
-include(":rustjnilib")
+include(":jnilib")
