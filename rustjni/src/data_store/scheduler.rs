@@ -1,16 +1,18 @@
-use std::{thread, time::Duration};
-use crate::data_store::store::SharedDataStore;
+use tokio::time::{interval, Duration};
+use crate::data_store::store::SharedStore;
 
-pub fn start_scheduler<T>(store: SharedDataStore<T>, interval_sec: u64, batch_size: usize)
+/// 非同期スケジューラを開始する
+pub async fn start_scheduler<T>(store: SharedStore<T>, interval_sec: u64, batch_size: usize)
 where
     T: std::fmt::Display + Clone + Send + 'static,
 {
-    thread::spawn(move || {
+    let mut ticker = interval(Duration::from_secs(interval_sec));
+
+    tokio::spawn(async move {
         loop {
-            thread::sleep(Duration::from_secs(interval_sec));
+            ticker.tick().await;
 
             let mut store_guard = store.lock().unwrap();
-
             let snapshot: Vec<T> = store_guard
                 .get_values()
                 .into_iter()
