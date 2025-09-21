@@ -6,9 +6,11 @@ This repository contains an Android project integrated with a Rust-based JNI lib
 
 ```text
 GitRoot/
-├─ MyAndroidApp/   ← Android Studio project
-│  └─ app/...
-├─ rust/           ← Rust project for JNI library
+├─ rustjniapp/   ← Android Studio project
+│  ├─ app/...
+│  ├─ jnilibs/...
+│  └─ settings.gradle.kts
+├─ rustjni/      ← Rust project for JNI library
 │  ├─ Cargo.toml
 │  └─ src/
 ├─ .gitignore
