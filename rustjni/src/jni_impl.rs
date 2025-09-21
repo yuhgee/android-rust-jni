@@ -2,13 +2,38 @@ use jni::JNIEnv;
 use jni::objects::{JClass, JString, JObject};
 use jni::sys::jstring;
 
+use android_logger::Config;
+use log::{info, debug, warn, error};
+// use jni::JNIEnv;
+// use jni::objects::JClass;
+
+/// 手動で呼ぶ初期化関数
+#[no_mangle]
+pub extern "system" fn Java_com_example_rustjnilib_NativeLib_initLogger(
+    _env: JNIEnv,
+    _class: JClass,
+) {
+    android_logger::init_once(
+        Config::default()
+            .with_min_level(log::Level::Debug) // 最低レベルを Debug に設定
+            .with_tag("RustJNI")               // logcat タグ
+    );
+
+    info!("Logger initialized manually");
+}
+
+
+
+
 // static method
 #[no_mangle]
 pub extern "system" fn Java_com_example_rustjnilib_NativeLib_helloWorld(
     env: JNIEnv,
     _class: JClass,
 ) -> jstring {
-    let output = "Hello from Static!";
+    let output = "Hello from Static!!!";
+   
+   log::info!("Logger initialized manually");
 
     // JString を生成
     let java_str: JString = env.new_string(output).unwrap();

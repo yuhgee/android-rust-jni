@@ -14,11 +14,35 @@ object NativeLib {
     private external fun helloWorld(): String
 
     fun staticMethod() {
-        Log.d(TAG, "return: ${helloWorld()}")
+        initLogger()
+        Log.d(TAG, "return: ${helloWorld()} ---")
     }
 
     fun instanceMethod() {
         Log.d(TAG, "return: ${INSTANCE.helloWorld()}")
+    }
+
+    external fun initLogger()
+
+    external fun start()
+    external fun stop()
+    external fun addData(value: Long)
+
+    fun testService() {
+        Log.d(TAG, "start!")
+        // Rust サービス起動
+        start()
+
+        // データ追加
+        addData(42)
+        addData(100)
+
+        // 少し待って確認
+        Thread.sleep(2000)
+
+        // サービス停止
+        stop()
+        Log.d(TAG, "stop!")
     }
 }
 

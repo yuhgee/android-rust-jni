@@ -9,3 +9,6 @@ crate-type = ["cdylib"]
 [dependencies]
 jni = "0.21.1"
 tokio = { version = "1", features = ["full"] }
+log = "0.4"
+android_logger = "0.11"
+lazy_static = "1.4"

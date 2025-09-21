@@ -19,6 +19,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         NativeLib.staticMethod()
         NativeLib.instanceMethod()
+        NativeLib.testService()
         enableEdgeToEdge()
         setContent {
             RustJniAppTheme {
