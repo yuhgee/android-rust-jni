@@ -25,9 +25,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // NativeLib初期化
-        NativeLib.initialize(this)
-        NativeLib.getCellTowerInfo()
+        NativeLib.initializeLib(this)
+        NativeLib.testService()
 
         setContent {
             MaterialTheme {

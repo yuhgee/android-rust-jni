@@ -1,2 +1,2 @@
-mod jni_impl;
+mod jni;
 mod data_store;

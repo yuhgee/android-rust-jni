@@ -1,4 +1,5 @@
 mod data_store;
+mod jni;
 
 use data_store::service::Service;
 use tokio::time::{sleep, Duration};

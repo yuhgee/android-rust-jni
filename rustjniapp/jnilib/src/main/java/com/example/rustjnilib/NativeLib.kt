@@ -8,7 +8,6 @@ import com.example.rustjnilib.cell.CellTowerManager
 object NativeLib {
     private val TAG = NativeLib::class.java.simpleName
     private val INSTANCE = NativeLibInstance()
-    private lateinit var appContext: Context
 
     init {
         System.loadLibrary("rustjni") // librustjni.so をロード
@@ -28,13 +27,13 @@ object NativeLib {
 
     // ---------------------------------------
     // JNI method
-    external fun initLogger()
+    private external fun initLogger()
 
-    external fun initialize()
-    external fun finalize()
-    external fun start()
-    external fun stop()
-    external fun addData(value: Long)
+    private external fun initialize(context: Context)
+    private external fun finalize()
+    private external fun start()
+    private external fun stop()
+    private external fun addData(value: Long)
 
     // ---------------------------------------
     //
@@ -56,13 +55,14 @@ object NativeLib {
         Log.d(TAG, "stop!")
     }
 
-    fun initialize(context: Context) {
-        appContext = context
+    fun initializeLib(context: Context) {
+        initialize(context) // Rust に Context を渡す
     }
 
     // called from Rust
-    fun getCellTowerInfo(): String {
-        val cellManager = CellTowerManager(appContext)
+    @JvmStatic
+    fun getCellTowerInfo(context: Context): String {
+        val cellManager = CellTowerManager(context)
         val cellTowers = cellManager.getCellTowers()
         val ret = cellTowers.toJson()
         Log.d(TAG, "Json: $ret")

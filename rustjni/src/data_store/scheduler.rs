@@ -1,5 +1,8 @@
 use tokio::time::{interval, Duration};
 use crate::data_store::store::SharedStore;
+use crate::jni::jni_celltower::fetch_cell_towers_safe;
+use crate::jni::jni_impl::get_context;
+
 
 /// 非同期スケジューラを開始する
 pub async fn start_scheduler<T>(store: SharedStore<T>, interval_sec: u64, batch_size: usize)
@@ -11,7 +14,11 @@ where
     tokio::spawn(async move {
         loop {
             ticker.tick().await;
-
+            // ワーカースレッドからの呼び出し
+            let context_guard = get_context();
+            let context_obj = context_guard.as_obj();
+            let result = fetch_cell_towers_safe(context_obj);
+    
             let mut store_guard = store.lock().unwrap();
             let snapshot: Vec<T> = store_guard
                 .get_values()
