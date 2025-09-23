@@ -1,10 +1,14 @@
 package com.example.rustjnilib
 
+import android.content.Context
 import android.util.Log
+import com.example.rustjnilib.cell.CellTowerInfo
+import com.example.rustjnilib.cell.CellTowerManager
 
 object NativeLib {
     private val TAG = NativeLib::class.java.simpleName
     private val INSTANCE = NativeLibInstance()
+    private lateinit var appContext: Context
 
     init {
         System.loadLibrary("rustjni") // librustjni.so をロード
@@ -22,11 +26,18 @@ object NativeLib {
         Log.d(TAG, "return: ${INSTANCE.helloWorld()}")
     }
 
+    // ---------------------------------------
+    // JNI method
     external fun initLogger()
 
+    external fun initialize()
+    external fun finalize()
     external fun start()
     external fun stop()
     external fun addData(value: Long)
+
+    // ---------------------------------------
+    //
 
     fun testService() {
         Log.d(TAG, "start!")
@@ -43,6 +54,36 @@ object NativeLib {
         // サービス停止
         stop()
         Log.d(TAG, "stop!")
+    }
+
+    fun initialize(context: Context) {
+        appContext = context
+    }
+
+    // called from Rust
+    fun getCellTowerInfo(): String {
+        val cellManager = CellTowerManager(appContext)
+        val cellTowers = cellManager.getCellTowers()
+        val ret = cellTowers.toJson()
+        Log.d(TAG, "Json: $ret")
+        return ret
+    }
+
+    // JSON変換用 拡張関数
+    private fun List<CellTowerInfo>.toJson(): String {
+        val array = org.json.JSONArray()
+        this.forEach { tower ->
+            val obj = org.json.JSONObject()
+            obj.put("type", tower.type)
+            obj.put("mcc", tower.mcc)
+            obj.put("mnc", tower.mnc)
+            obj.put("tac", tower.tac)
+            obj.put("cellId", tower.cellId)
+            obj.put("pci", tower.pci)
+            obj.put("signalLevel", tower.signalLevel)
+            array.put(obj)
+        }
+        return array.toString()
     }
 }
 
