@@ -27,7 +27,8 @@ object NativeLib {
 
     // ---------------------------------------
     // JNI method
-    private external fun initLogger()
+
+    external fun initLogger()
 
     private external fun initialize(context: Context)
     private external fun finalize()
@@ -38,12 +39,15 @@ object NativeLib {
     // ---------------------------------------
     //
 
+    // 確認用だから同期にしてあるが、非同期になる。
     fun testService() {
         Log.d(TAG, "start!")
         // Rust サービス起動
         start()
 
-        // データ追加
+        // データ追加(1秒ごととか。。)
+        // 本来は内部的に実行。
+        // 現在のスケジューラはタイムテーブルを作るところ。
         addData(42)
         addData(100)
 

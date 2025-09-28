@@ -62,6 +62,13 @@ val rustBuild = tasks.register("rustBuild") {
             workingDir = file("../../rustjni")
             executable = cargoPath
             args = listOf(
+                "clean",
+            )
+        }
+        exec {
+            workingDir = file("../../rustjni")
+            executable = cargoPath
+            args = listOf(
                 "ndk",
                 "-t", "arm64-v8a",
                 "-o", "../rustjniapp/jnilib/src/main/jniLibs",

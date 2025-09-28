@@ -1,23 +1,15 @@
+use std::result;
+
 use jni::JNIEnv;
 use jni::objects::{JClass, JObject, JValue, JString};
-use serde::Deserialize;
+use serde::{de, Deserialize};
 use crate::jni::jni_impl::with_env;
-
-#[derive(Debug, Deserialize)]
-pub struct CellTowerInfo {
-    pub type_: String,
-    pub mcc: i32,
-    pub mnc: i32,
-    pub tac: Option<i32>,
-    pub cellId: i32,
-    pub pci: Option<i32>,
-    pub signalLevel: i32,
-}
 
 pub fn get_cell_towers_from_java(
     env: &mut JNIEnv,
     context_obj: &JObject, // Activity / Application のインスタンス
 ) -> Result<String, Box<dyn std::error::Error>> {
+
     // Context から ClassLoader を取得
     let class_loader = env
         .call_method(context_obj, "getClassLoader", "()Ljava/lang/ClassLoader;", &[])?
@@ -47,6 +39,10 @@ pub fn get_cell_towers_from_java(
 
     // Rust String に変換して返す
     let json: String = env.get_string(&jstring)?.into();
+
+    // この辺はJNI外でやる。
+    let result = parse_json(&json);
+
     Ok(json)
 }
 
@@ -56,4 +52,24 @@ pub fn fetch_cell_towers_safe(context_obj: &JObject) -> Result<String, Box<dyn s
         let mut env = env;
         get_cell_towers_from_java(&mut env, context_obj)
     })
+}
+
+
+// CellTowerInfo 構造体
+#[derive(Debug, Deserialize)]
+pub struct CellTowerInfo {
+    #[serde(rename = "type")]
+    pub type_: String,
+    pub mcc: Option<i32>,
+    pub mnc: Option<i32>,
+    pub tac: Option<i32>,
+    pub cellId: Option<i32>,
+    pub pci: Option<i32>,
+    pub signalLevel: i32,
+}
+
+fn parse_json(json: &str) -> Result<Vec<CellTowerInfo>, serde_json::Error> {
+    let towers: Vec<CellTowerInfo> = serde_json::from_str(json)?;
+    log::debug!("Cell Tower Info: {:?}", towers);
+    Ok(towers)
 }

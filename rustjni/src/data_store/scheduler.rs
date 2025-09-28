@@ -1,7 +1,7 @@
 use tokio::time::{interval, Duration};
 use crate::data_store::store::SharedStore;
 use crate::jni::jni_celltower::fetch_cell_towers_safe;
-use crate::jni::jni_impl::get_context;
+use crate::jni::jni_impl::get_context_ref;
 
 
 /// 非同期スケジューラを開始する
@@ -15,8 +15,11 @@ where
         loop {
             ticker.tick().await;
             // ワーカースレッドからの呼び出し
-            let context_guard = get_context();
-            let context_obj = context_guard.as_obj();
+            let context_guard = get_context_ref();
+            let context_ref = context_guard
+                .as_ref()
+                .expect("Context not initialized");
+            let context_obj = context_ref.as_obj();
             let result = fetch_cell_towers_safe(context_obj);
     
             let mut store_guard = store.lock().unwrap();
