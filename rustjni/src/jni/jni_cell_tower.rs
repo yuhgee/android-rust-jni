@@ -40,9 +40,6 @@ pub fn get_cell_towers_from_java(
     // Rust String に変換して返す
     let json: String = env.get_string(&jstring)?.into();
 
-    // この辺はJNI外でやる。
-    let result = parse_json(&json);
-
     Ok(json)
 }
 
@@ -55,21 +52,3 @@ pub fn fetch_cell_towers_safe(context_obj: &JObject) -> Result<String, Box<dyn s
 }
 
 
-// CellTowerInfo 構造体
-#[derive(Debug, Deserialize)]
-pub struct CellTowerInfo {
-    #[serde(rename = "type")]
-    pub type_: String,
-    pub mcc: Option<i32>,
-    pub mnc: Option<i32>,
-    pub tac: Option<i32>,
-    pub cellId: Option<i32>,
-    pub pci: Option<i32>,
-    pub signalLevel: i32,
-}
-
-fn parse_json(json: &str) -> Result<Vec<CellTowerInfo>, serde_json::Error> {
-    let towers: Vec<CellTowerInfo> = serde_json::from_str(json)?;
-    log::debug!("Cell Tower Info: {:?}", towers);
-    Ok(towers)
-}

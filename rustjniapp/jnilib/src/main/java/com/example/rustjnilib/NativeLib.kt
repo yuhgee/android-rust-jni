@@ -45,14 +45,8 @@ object NativeLib {
         // Rust サービス起動
         start()
 
-        // データ追加(1秒ごととか。。)
-        // 本来は内部的に実行。
-        // 現在のスケジューラはタイムテーブルを作るところ。
-        addData(42)
-        addData(100)
-
-        // 少し待って確認
-        Thread.sleep(2000)
+        // サービス起動中
+        Thread.sleep(10000)
 
         // サービス停止
         stop()
@@ -69,7 +63,7 @@ object NativeLib {
         val cellManager = CellTowerManager(context)
         val cellTowers = cellManager.getCellTowers()
         val ret = cellTowers.toJson()
-        Log.d(TAG, "Json: $ret")
+//        Log.d(TAG, "Json: $ret")
         return ret
     }
 
