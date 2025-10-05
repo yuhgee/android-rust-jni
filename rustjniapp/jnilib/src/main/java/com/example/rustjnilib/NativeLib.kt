@@ -2,8 +2,11 @@ package com.example.rustjnilib
 
 import android.content.Context
 import android.util.Log
+import com.example.rustjnilib.cell.Accelerometer
 import com.example.rustjnilib.cell.CellTowerInfo
 import com.example.rustjnilib.cell.CellTowerManager
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
 object NativeLib {
     private val TAG = NativeLib::class.java.simpleName
@@ -63,6 +66,18 @@ object NativeLib {
         val cellManager = CellTowerManager(context)
         val cellTowers = cellManager.getCellTowers()
         val ret = cellTowers.toJson()
+//        Log.d(TAG, "Json: $ret")
+        return ret
+    }
+
+    @JvmStatic
+    fun getAccelerometer(): String {
+        val value = Accelerometer(
+            1_000_000L,
+            10.0F, 20.0F, 30.0F,
+        )
+        val json = Json.encodeToString(value)
+        val ret = json.toString()
 //        Log.d(TAG, "Json: $ret")
         return ret
     }

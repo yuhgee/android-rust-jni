@@ -4,7 +4,7 @@ use crate::data::cell_tower_info::CellTowerInfo;
 use async_trait::async_trait;
 use std::time::Duration;
 use std::sync::Mutex;
-use crate::jni::jni_cell_tower::fetch_cell_towers_safe;
+use crate::jni::jni_cell_tower::{fetch_cell_towers_safe, fetch_cell_towers_safe_with_context};
 use crate::jni::jni_impl::get_context_ref;
 
 pub struct CellTowerTask {
@@ -71,12 +71,21 @@ impl ScheduledTask for CellTowerTask {
 
 impl CellTowerTask {
     fn get_cell_towers_from_java(&self) -> Result<String, Box<dyn std::error::Error>> {
-        let context_guard = get_context_ref();
-        let context_ref = context_guard
-            .as_ref()
-            .expect("Context not initialized");
-        let context_obj = context_ref.as_obj();
-        match fetch_cell_towers_safe(context_obj) {
+        // let context_guard = get_context_ref();
+        // let context_ref = context_guard
+        //     .as_ref()
+        //     .expect("Context not initialized");
+        // let context_obj = context_ref.as_obj();
+        // match fetch_cell_towers_safe_with_context(context_obj) {
+        //     Ok(json) => {
+        //         Ok(json)
+        //     },
+        //     Err(e) => {
+        //         Err(e)
+        //     }
+        // }
+
+        match fetch_cell_towers_safe() {
             Ok(json) => {
                 Ok(json)
             },
